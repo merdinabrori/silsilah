@@ -1,33 +1,27 @@
 <?php 
 require_once 'db_modul.php';
+// var_dump($_SERVER['REQUEST_URI']);
+$id_center = explode('/',$_SERVER['REQUEST_URI'])[3];
+// echo $id_center;
 
-$orang = getData("SELECT * FROM person");
-$hubungan = getData("SELECT * FROM relation");
-// ortu = 3; pasangan = 0; anak = 1
-$ortu = getData("SELECT * FROM relation WHERE hubungan = 3");
-$bini = getData("SELECT * FROM relation WHERE hubungan = 0");
-$anak = getData("SELECT * FROM relation WHERE hubungan = 1");
-$id_list = array_column($orang, 'id');
+$orang = getData("SELECT * FROM person WHERE id = $id_center")[0];
+$hubungan = getData("SELECT id_2, hubungan FROM relation WHERE id_1 = $id_center");
+if (count($hubungan) !== 0) {
+    $id_list = array_column($hubungan, 'id_2');
+    $keluarga = getData("SELECT id, nama FROM person", $id_list);
+}
 
-var_dump($orang);
-echo "------------------------------------------";
-var_dump($ortu);
-echo "------------------------------------------";
-var_dump(array_search(8, $id_list));
+// var_dump($orang);
+// echo "------------------------------------------";
+// var_dump($hubungan);
+require 'layout/header.php';
+require 'layout/navbar.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-    <style>
-        th {text-align: left;}
-        td {text-align: center;}
-    </style>
-</head>
-<body>
-    <div>
+<div class="container">
+    <h3>Nama : <?= $orang['nama'] ?></h3>
+</div>
+<?php if(count($hubungan) !== 0) : ?>
+    <div class="container">
         <table cellspacing="0" cellpadding="5">
             <tr>
                 <th>Orang tua :</th>
@@ -50,10 +44,9 @@ var_dump(array_search(8, $id_list));
             </tr>
         </table>
     </div>
-    <div style="text-align: center;">
-        <img src="altera_dance.gif" width="100px" height="100px">
-        <h3>Under development</h3>
-    </div>
-
-</body>
-</html>
+<?php endif; ?>
+<div style="text-align: center;">
+    <img src="../altera_dance.gif" class="img-thumbnail rounded-circle" width="100px" height="100px">
+    <h3>Under development</h3>
+</div>
+<?php require 'layout/footer.php'; ?>

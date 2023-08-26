@@ -6,8 +6,8 @@ $konek = mysqli_connect($hostname, "root", "", "silsilah");
 function getData($query, $ids = null){
     global $konek;
 
-    if ($ids!==null) {
-        $result = mysqli_query($konek, $query . "WHERE id IN " . $ids);
+    if ($ids !== null) {
+        $result = mysqli_query($konek, $query . " WHERE id IN (" . implode(', ', $ids) . ")");
     } else {
         $result = mysqli_query($konek, $query);
     }
